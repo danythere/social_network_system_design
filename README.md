@@ -8,28 +8,27 @@
 * Subscribe to other users.
 * Viewing a user's profile.
 * View popular places with the ability to view posts for these locations.
-* A shared feed consisting of subscription posts. Mixing recommendations will be a plus.
+* A shared feed consisting of subscription posts. Mixing recommendations.
 * Finding like-minded people to travel with will be a plus.
 
 ## Non-functional requirements:
 * 10 000 000 DAU.
 * CIS only.
 * WEB, Android, iOS.
-* 10 post views and likes per day from one user.
-* 1 user can post up to three posts per day 
-in the hot seasons(holidays/summer/etc).
-* One comment per day from a user.
-* 3 comment in one post.
+* 10 post views and likes per day from one user.(hot x2)
+* 1 user can post up to three posts per day.(hot x2)
+* One comment per day from a user.(hot x2)
+* 3 comments in one post.(hot x2)
 * We keep the data forever.
 * 10 million subscribers maximum.
-* We believe that six months is a hot period, and the other six months is a normal one. In a normal period, the activity of users decreases by half.
-* SLA 99,95%.
+* We believe that six months is a hot period, and the other six months is a normal one. In a hot period, the activity of users grows twice.
+* Availability 99,95%.
 
 ## Basic calculations:
 * RPS creating posts = 10 000 000 * 3 / 86 400 ~ 350.
 * RPS viewing posts = 10 000 000 * 10 / 86 400 ~ 1 160.
-* RPS likes = 10 000 000 * 10 / 86 400 ~ 1 160.
-* RPS comments = 10 000 000 * 1 / 86400 ~ 115.
+* RPS creating likes = 10 000 000 * 10 / 86 400 ~ 1 160.
+* RPS creating comments = 10 000 000 * 1 / 86400 ~ 115.
 * One post size = 300000(photo)*5 + 1000(description) + 100(location)= 1.5 MB.
 * One user size = 50(username) + 3000(photo) + 100(location) = 3.1 KB.
 * Traffic creating posts = 350 * one post size ~ 0.5 GB.
