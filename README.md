@@ -2,7 +2,8 @@
 
 ## Functional requirements:
 * User registration and authorization.
-* Publishing posts(location, description and photo - minimum set).
+* Publishing posts(location, description and photo - minimum set). Also we can delete and edit posts, comments.
+* Like the posts.
 * One post can have several photos(max - 5).
 * Evaluating and writing comments for posts.
 * Subscribe to other users.
