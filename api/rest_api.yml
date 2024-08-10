@@ -9,10 +9,10 @@ info:
   version: 1.0.0
 
 paths:
-  /user:
+  /users:
     post:
       tags:
-        - user
+        - users
       summary: Create new user
       requestBody:
         content:
@@ -32,10 +32,13 @@ paths:
                     type: number
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
+
 
     patch:
       tags:
-        - user
+        - users
       summary: Edit user
       requestBody:
         content:
@@ -52,10 +55,13 @@ paths:
                 $ref: '#/components/schemas/User'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
+
 
     get:
       tags:
-        - user
+        - users
       summary: Get user by params
       parameters:
         - name: username
@@ -81,11 +87,14 @@ paths:
                   $ref: '#/components/schemas/User'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
-  /user/{id}:
+
+  /users/{id}:
     get:
       tags:
-        - user
+        - users
       summary: Get user by id
       parameters:
         - name: id
@@ -120,11 +129,13 @@ paths:
                   - $ref: '#/components/schemas/User'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
   
   /auth:
     post:
       tags:
-        - user
+        - users
       requestBody:
           content:
             application/json:
@@ -145,11 +156,14 @@ paths:
                 type: boolean
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
+
 
   /logout:
     post:
       tags:
-        - user
+        - users
       responses:
         '200':
           description: Success
@@ -157,12 +171,15 @@ paths:
             application/json:
               schema:
                 type: boolean
+        '500':
+          description: Internal Server Error
+
 
   
-  /post:
+  /posts:
     post:
       tags:
-        - post
+        - posts
       summary: Create new post
       requestBody:
         content:
@@ -182,9 +199,12 @@ paths:
                     type: number
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
+
     get:
       tags:
-        - post
+        - posts
       summary: Get post by params
       parameters:
         - name: location
@@ -196,6 +216,7 @@ paths:
               type: number
       responses:
         '200':
+          description: success
           content:
             application/json:
               schema:
@@ -204,11 +225,14 @@ paths:
                   $ref: '#/components/schemas/PostWithActions'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
-  /post/{id}:
+
+  /posts/{id}:
     get:
       tags:
-        - post
+        - posts
       summary: Get post by id
       parameters:
         - name: id
@@ -234,7 +258,7 @@ paths:
 
     patch: 
       tags:
-        - post
+        - posts
       summary: Change post by id
       parameters:
         - name: id
@@ -263,10 +287,12 @@ paths:
                   - $ref: '#/components/schemas/PostWithActions'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
   
     delete:
       tags:
-        - post
+        - posts
       summary: Delete post by id
       parameters:
         - name: id
@@ -281,23 +307,10 @@ paths:
                   
         '400':
           description: Invalid data
-  
-  /feed:
-    get:
-      tags:
-        - feed
-      summary: Get personal feed
-      responses:
-        '200':
-          description: success
-          content:
-            application/json:
-              schema:
-                type: array
-                items: 
-                  $ref: '#/components/schemas/PostWithActions'
+        '500':
+          description: Internal Server Error
 
-  /comment:
+  /comments:
     post:
       tags:
         - actions
@@ -328,8 +341,10 @@ paths:
                     type: number
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
-  /comment/{id}:
+  /comments/{id}:
     delete:
       tags:
         - actions
@@ -353,6 +368,8 @@ paths:
                     type: number
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
     patch:
       tags:
@@ -387,8 +404,10 @@ paths:
                     type: number
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
-  /like:
+  /likes:
     post:
       tags:
         - actions
@@ -416,11 +435,13 @@ paths:
                     type: boolean
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
   
   /locations:
     get:
       tags:
-        - location
+        - locations
       summary: Get all locations
       responses:
         '200':
@@ -437,11 +458,13 @@ paths:
                         id:
                           type: number
                     - $ref: '#/components/schemas/Location'
+        '500':
+          description: Internal Server Error
 
   /locations/{id}:
     get:
       tags:
-        - location
+        - locations
       summary: Get data for location
       parameters:
         - name: id
@@ -480,6 +503,8 @@ paths:
                         - $ref: '#/components/schemas/User'
         '400':
           description: Invalid data
+        '500':
+          description: Internal Server Error
 
 components:
   schemas:
