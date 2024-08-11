@@ -1,0 +1,606 @@
+openapi: 3.0.3
+
+tags:
+  - name: Travelers platform
+
+info:
+  title: TravelersPlatform  API
+  description: Current API describes interaction with TravelersPlatform
+  version: 1.0.0
+
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: User has created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+
+    patch:
+      tags:
+        - users
+      summary: Edit user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: User has updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+
+    get:
+      tags:
+        - users
+      summary: Get user by params
+      parameters:
+        - name: username
+          in: query
+          description: User name
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: Location ids
+          schema:
+            type: array
+            items:
+              type: number
+      responses:
+        '200':
+          description: Post has created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by id
+      parameters:
+        - name: id
+          in: path
+          description: Unique user id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      id:
+                        type: integer
+                      posts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/PostWithActions'
+                      subscriptions:
+                        type: array
+                        items:
+                           $ref: '#/components/schemas/User'
+                      subscribers:
+                        type: array
+                        items:
+                           $ref: '#/components/schemas/User'
+                  - $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+  
+  /auth:
+    post:
+      tags:
+        - users
+      requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  password:
+                    type: string
+          required: true
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+
+  /logout:
+    post:
+      tags:
+        - users
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '500':
+          description: Internal Server Error
+
+
+  
+  /posts:
+    post:
+      tags:
+        - posts
+      summary: Create new post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        required: true
+      responses:
+        '200':
+          description: Post has created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+    get:
+      tags:
+        - posts
+      summary: Get post by params
+      parameters:
+        - name: location
+          in: query
+          description: Location ids
+          schema:
+            type: array
+            items:
+              type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostWithActions'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+
+  /posts/{id}:
+    get:
+      tags:
+        - posts
+      summary: Get post by id
+      parameters:
+        - name: id
+          in: path
+          description: unique post id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      id:
+                        type: integer
+                  - $ref: '#/components/schemas/PostWithActions'
+        '400':
+          description: Invalid data
+
+    patch: 
+      tags:
+        - posts
+      summary: Change post by id
+      parameters:
+        - name: id
+          in: path
+          description: unique post id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        description: Edit post
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      id:
+                        type: integer
+                  - $ref: '#/components/schemas/PostWithActions'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+  
+    delete:
+      tags:
+        - posts
+      summary: Delete post by id
+      parameters:
+        - name: id
+          in: path
+          description: Unique post id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: success
+                  
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+  /comments:
+    post:
+      tags:
+        - actions
+      summary: Create new comment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - postId
+                - text
+              properties:
+                postId:
+                  type: number
+                text:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: User has created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+  /comments/{id}:
+    delete:
+      tags:
+        - actions
+      summary: Delete comment by id
+      parameters:
+        - name: id
+          in: path
+          description: Unique comment id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Comment has created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+    patch:
+      tags:
+        - actions
+      summary: Update comment by id
+      parameters:
+        - name: id
+          in: path
+          description: Unique comment id
+          required: true
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            schema:
+             type: object
+             required:
+              - text
+             properties:
+              text:
+                type: string
+      responses:
+        '200':
+          description: Comment has updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+  /likes:
+    post:
+      tags:
+        - actions
+      summary: Set like on post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                postId:
+                  type: number
+                checked:
+                  type: boolean
+        required: true
+      responses:
+        '200':
+          description: Like has setted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checked:
+                    type: boolean
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+  
+  /locations:
+    get:
+      tags:
+        - locations
+      summary: Get all locations
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  allOf:
+                    - type: object
+                      properties:
+                        id:
+                          type: number
+                    - $ref: '#/components/schemas/Location'
+        '500':
+          description: Internal Server Error
+
+  /locations/{id}:
+    get:
+      tags:
+        - locations
+      summary: Get data for location
+      parameters:
+        - name: id
+          in: path
+          description: Unique location id
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      type: object
+                      allOf:
+                        - type: object
+                          properties:
+                            id:
+                              type: integer
+                        - $ref: '#/components/schemas/PostWithActions'
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      allOf: 
+                        - type: object
+                          properties:
+                            id:
+                              type: integer
+                        - $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    Location:
+      type: object
+      required:
+        - name
+      properties:
+        coordinates:
+          type: array
+          items:
+            type: number
+        name:
+          type: string
+
+    Post:
+      type: object
+      required:
+        - description
+      properties:
+        photos:
+          type: array
+          items: 
+            type: string
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+    
+    PostWithActions:
+      type: object
+      allOf:
+        - type: object
+          properties:
+            likes:
+              type: array
+              items: 
+                type: object
+                allOf:
+                  - $ref: '#/components/schemas/User'
+            comments:
+              type: array
+              items:
+                $ref: '#/components/schemas/Comment'
+        - $ref: '#/components/schemas/Post'
+          
+    Travel:
+      type: object
+      required:
+        - location
+      properties:
+        location:
+          $ref: '#/components/schemas/Location'
+        type:
+          type: string
+          default: planned
+          enum:
+            - planned
+            - completed
+            - in progress
+        dates:
+          type: object
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+    User:
+      type: object
+      required:
+        - username
+      properties:
+        username:
+          type: string
+        photos:
+          type: array
+          items:
+            type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        travels:
+          type: array
+          items:
+            $ref: '#/components/schemas/Travel'
+    
+    Comment:
+      type: object
+      required:
+        - text
+        - createdDate
+        - author
+      properties:
+        text:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        author:
+          $ref: '#/components/schemas/User'
