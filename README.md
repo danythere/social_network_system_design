@@ -40,13 +40,54 @@
 * Traffic creating comments = 115 * 1000 = 0.1 MB.
 * Traffic viewing comments = 3500 * 1000 = 3.5 MB.
 * Connections = 10 000 000 * 0.1 = 1 000 000.
+* RPS getting users = 1 000 000.(connections)
+* Traffic getting users = 1 000 000 * 3.1 KB =  3.1 GB
 
-The above calculations are for the hot season.
-
-5 years(period of planning hardware):
-* Posts counts = 10 000 000 * 3 posts * 365(days)* 1.5(year activity) * 5 = 82 125 000 000.
-* Posts size = 82 125 000 000 * one post size ~ 123 петабайтов.
+1 year(period of planning hardware):
+* Posts counts = 10 000 000 * 3 posts * 365(days)* 1.5(year activity) ~ 16 500 000 000.
+* Posts size = 16 500 000 000 * one post size ~ 25 petabytes
 * Users count = 200 000 000(~CIS population).
 * Users size = 200 000 000 * 3.1 = 0.6 GB.
+* Comments size = 115(RPS) * 86 400 * 365(days) = 3 TB
+
+Hardware:
+* Users:  
+    * Disks_for_capacity(SSD(nVME)) = 0.6 GB / 30 TB ~ 1
+    * Disks_for_throughput(SSD(nVME)) ~ 3.1 GB / 3 GB ~ 2
+    * Disks_for_iops(SSD(nVME)) = 1 000 000 / 10 000 = 100
+    * Disks(SSD(nVME)) = max(1, 2, 100) = 100
+
+* Posts:
+    * Disks_for_capacity(SSD) = 25 petabytes / 100 TB = 250
+    * Disks_for_throughput(SSD) = 2 GB/s(creating + viewing) / 500 MB/s ~ 4(SSD) - in normal, in hot - 8.
+    * Disks_for_iops = 1500(creating + viewing) / 1000 ~ 1.5(SSD) - in normal, in hot - 3.
+    * **Disks(SSD)** = max(250, 4, 3) = 250.
+    
+      OR we can save old data in HDD and use SSD for latest data. 
+      
+      max halfyear data = 10 000 000 * 3 posts * 2(hot) = 16  petabytes   
+
+    *  Disks_for_capacity(SSD) = 16 petabytes / 100 TB = 160
+     * Disks_for_throughput(SSD) = 2 GB/s(creating + viewing) / 500 MB/s ~ 4(SSD) - in normal, in hot - 8.
+     * Disks_for_iops(SSD) = 1500(creating + viewing) / 1000 ~ 1.5(SSD) - in normal, in hot - 3.
+    * **Disks(SSD)** = max(160, 8, 3) = 160
+
+     *  Disks_for_capacity(HDD) = 9 petabytes / 100 TB = 281(HDD)
+     * Disks_for_throughput = 2 GB/s(creating + viewing) / 100 MB/s ~ 20 - in normal, in hot - 40.
+     * Disks_for_iops(HDD) = 1500(creating + viewing) / 1000 ~ 15 - in normal, in hot - 30
+    * **Disks(HDD)** = max(281, 40, 30) = 281.
+
+* Comments:
+    * Disks_for_capacity(HDD) = (3 TB / 32 TB)~ 1.
+    * Disks_for_throughput(HDD) = (0.1 + 3.5) MB / 100 TB ~ 1.
+    * Disks_for_iops(HDD) = (115 + 3) / 100 ~ 2.
+    * Disks(HDD) = Max(1, 1, 2) = 2 - in normal, 4 - in hot.
+
+* Likes:
+    * Disks_for_capacity(SSD (nVME)) = 0.12 MB * 365 * 1.5(seasons) / 30 TB ~ 1.
+    * Disks_for_throughput(SSD (nVME)) = 0.12 MB/s / 3 GB/s  ~ 1
+    * Disks_for_iops(SSD (nVME)) = 120 000 / 10 000 ~ 12 
+    * Disks(SSD (nVME)) = Max(1, 1, 12) = 12.
+
 
 
