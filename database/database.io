@@ -4,6 +4,9 @@ enum travel_type {
         in_progress
 }
 
+// master-slave(1 sync + async)
+// replication factor 50
+// sharding by userId
 Table users {
   id integer [primary key]
   username varchar
@@ -13,12 +16,18 @@ Table users {
 
 }
 
+// master-slave(1 sync + async)
+// replication factor 2
+// without sharding
 Table locations {
    id integer [primary key]
    coordinates integer[]
    name varchar
 }
 
+// master-slave(1 sync + async)
+// replication factor 2
+// sharding by location_id
 Table travels {
   id integer [primary key]
   location_id integer
@@ -27,6 +36,9 @@ Table travels {
   to date
 }
 
+// master-slace(1 sync + async)
+// replication factor 2
+// sharding by post_id
 Table comments {
   id integer [primary key]
   text varchar
@@ -35,12 +47,18 @@ Table comments {
   post_id integer
 }
 
+// master-slace(1 sync + async)
+// replication factor 12
+// sharding by post_id
 Table likes {
   id integer [primary key]
   user_id integer
   post_id integer
 }
 
+// master-slace(1 sync + async)
+// replication factor 3
+// sharding by user_id
 Table posts {
   id integer [primary key]
   user_id integer

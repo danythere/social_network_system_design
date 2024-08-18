@@ -56,12 +56,16 @@ Hardware:
     * Disks_for_throughput(SSD(nVME)) ~ 3.1 GB / 3 GB ~ 2
     * Disks_for_iops(SSD(nVME)) = 1 000 000 / 10 000 = 100
     * Disks(SSD(nVME)) = max(1, 2, 100) = 100
+    * Hosts = 2
+    * Hosts_with_replication = 2 * 50 = 100
 
 * Posts:
     * Disks_for_capacity(SSD) = 25 petabytes / 100 TB = 250
     * Disks_for_throughput(SSD) = 2 GB/s(creating + viewing) / 500 MB/s ~ 4(SSD) - in normal, in hot - 8.
     * Disks_for_iops = 1500(creating + viewing) / 1000 ~ 1.5(SSD) - in normal, in hot - 3.
     * **Disks(SSD)** = max(250, 4, 3) = 250.
+    * Hosts = 250
+    * Hosts_with_replication = 250 * 3 = 750
     
       OR we can save old data in HDD and use SSD for latest data. 
       
@@ -77,17 +81,24 @@ Hardware:
      * Disks_for_iops(HDD) = 1500(creating + viewing) / 1000 ~ 15 - in normal, in hot - 30
     * **Disks(HDD)** = max(281, 40, 30) = 281.
 
+    * Hosts = 160 + 281 = 441
+    * Hosts_with_replication = 441 * 3 = 1323
+
 * Comments:
     * Disks_for_capacity(HDD) = (3 TB / 32 TB)~ 1.
     * Disks_for_throughput(HDD) = (0.1 + 3.5) MB / 100 TB ~ 1.
     * Disks_for_iops(HDD) = (115 + 3) / 100 ~ 2.
     * Disks(HDD) = Max(1, 1, 2) = 2 - in normal, 4 - in hot.
+    * Hosts = 1
+    * Hosts_with_replication = 1 * 2 = 2
 
 * Likes:
     * Disks_for_capacity(SSD (nVME)) = 0.12 MB * 365 * 1.5(seasons) / 30 TB ~ 1.
     * Disks_for_throughput(SSD (nVME)) = 0.12 MB/s / 3 GB/s  ~ 1
     * Disks_for_iops(SSD (nVME)) = 120 000 / 10 000 ~ 12 
     * Disks(SSD (nVME)) = Max(1, 1, 12) = 12.
+    * Hosts = 1
+    * Hosts_with_replication = 1 * 12 = 12;
 
 
 
