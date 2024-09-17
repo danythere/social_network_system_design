@@ -29,6 +29,19 @@
 * We believe that six months is a hot period, and the other six months is a normal one. In a hot period, the activity of users grows twice.
 * Availability 99,95%.
 
+## Design overview
+
+### complete diagram
+![complete diagram](./images/diagrams/all.png)
+### context diagram
+![context diagram](./images/diagrams/context.png)
+### post system diagram
+![post system diagram](./images/diagrams/post.png)
+### user system diagram
+![user system diagram](./images/diagrams/user.png)
+### place system diagram
+![place system diagram](./images/diagrams/place.png)
+
 ## Basic calculations:
 * RPS creating posts = 10 000 000 * 3 / 86 400 ~ 350.
 * RPS viewing posts = 10 000 000 * 10 / 86 400 ~ 1 160.

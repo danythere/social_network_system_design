@@ -7,5 +7,4 @@ Table users {
   photos varchar[]
   location_id integer
   travel_id integer
-
 }

@@ -1,0 +1,59 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(traveler, "traveler")
+
+System_Boundary(postSystem, "Post system") {
+   Container(postService, "Post service", "service", "responsible for posts content, likes, comments")
+   ContainerDb(postDb, "Post database", "PostgreSQL")
+   Container(feedService, "Feed service", "service", "pre-prepare feed")
+   ContainerDb(feedCache, "Feed cache", "Redis", "Pre-prepared posts")
+   ContainerDb(postCache, "Post cache", "Redis", "Pre-prepared posts by user")
+   ContainerDb(celebrityCache, "Celebrity cache", "Redis", "Pre-prepared posts from celebrity")
+   ContainerDb(recCache, "Recommendation cache", "Redis", "Pre-prepared recommendation posts")
+   ContainerDb(imageDb, "Image database(temp and stable)", "S3")
+}
+
+System_Boundary(userSystem, "User system") {
+   Container(interestsService, "Interests service", "service", "pre-prepare interests")
+}
+
+ContainerDb(imageCdn, "Image CDN")
+
+System_Boundary(placeSystem, "Place system") {
+  Container(placeService, "Place service")
+}
+
+Container(apiGateway, "Api Gateway")
+
+ContainerQueue(postQueue, "Post queue", "Rabbit MQ")
+ContainerQueue(recQueue, "Rec queue", "Rabbit MQ")
+
+Rel(traveler, imageCdn, "get an image")
+
+Rel(imageCdn, imageDb, "pull if not exist")
+
+Rel(postService, imageDb, "upload a photo, apply post creating")
+Rel(postService, postDb, "CRUD posts, update post, like, comment")
+Rel(postService, postCache, "CRUD user posts")
+Rel(postService, postQueue, "send update")
+Rel(postService, placeService, "get place of post")
+Rel(postService, recQueue, "save info about user action")
+
+
+Rel(feedService, feedCache, "CRUD pre-prepared posts")
+Rel(feedService, recCache, "CRUD rec posts")
+Rel(feedService, celebrityCache, "CRUD celebrity posts")
+Rel(feedService, postService, "get posts if no cache")
+Rel(feedService, interestsService, "get user interests for create rec feed")
+
+
+Rel(postQueue, feedService, "give a new post")
+Rel(postQueue, placeService, "give updates")
+
+Rel(recQueue, interestsService, "process info about user action")
+
+Rel(traveler, apiGateway, "view feed, like, send comments")
+
+Rel(apiGateway, feedService, "get personal feed")
+Rel(apiGateway, postService, "CRUD post/like/comment")
+@enduml

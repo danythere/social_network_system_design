@@ -1,0 +1,31 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(traveler, "traveler")
+
+
+
+System_Boundary(placeSystem, "Place system") {
+   Container(placeService, "Place service", "service", "responsible for popular places and locations")
+   ContainerDb(placeDb, "Place database", "PostgreSQL")
+   ContainerDb(placeCache, "Posts by place cache", "Redis")
+}
+
+System_Boundary(postSystem, "Post system") {
+  Container(postService, "Post service", "service", "responsible for posts content, likes, comments")
+}
+
+ContainerQueue(postQueue, "Post queue", "Rabbit MQ")
+
+Container(apiGateway, "Api Gateway")
+
+Rel(traveler, apiGateway, "view popular places or set profile location")
+
+Rel(apiGateway, placeService, "")
+
+Rel(postQueue, placeService, "give updates")
+
+Rel(postService, postQueue, "send update")
+Rel(placeService, placeDb, "get places")
+Rel(placeService, placeCache, "get, update popular places")
+Rel(placeService, postService, "get posts in place")
+@enduml
