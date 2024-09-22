@@ -4,15 +4,15 @@ Person(traveler, "traveler")
 
 
 System_Boundary(userSystem, "User system") {
-   Container(userService, "User service", "service", "provides info about user")
+   Container(userService, "User service", "service", "provides info about user(name, birthdate, photos...")
    ContainerDb(userDb, "User database", "PostgreSQL")
-   Container(relationService, "Relation service", "service", "provides info about relations")
+   Container(relationService, "Relation service", "service", "provides info about relations(subscriptions and subscribers)")
    ContainerDb(relationDb, "Relation database", "PostgreSQL")
    ContainerDb(relationCache, "Relation cache", "Redis")
    Container(authService, "Auth service", "service", "responsible for auth/registration")
    ContainerDb(authDb, "Auth database", "PostgreSQL")
    ContainerDb(authCache, "Auth cache", "Redis")
-   Container(interestsService, "Interests service", "service", "pre-prepare interests")
+   Container(interestsService, "Interests service", "service", "pre-prepare interests(for example: Max likes nature photos. Emma likes videos with animals.)")
    ContainerDb(interestsCache, "Interests cache", "Redis", "Pre-prepared user inrterests")
    ContainerDb(interestsDb, "Interests database", "MongoDB", "user interests")
 }
@@ -23,7 +23,7 @@ ContainerQueue(userQueue, "User queue", "Rabbit MQ")
 
 System_Boundary(postSystem, "Post system") {
   Container(postService, "Post service", "service", "responsible for posts content, likes, comments")
-  Container(feedService, "Feed service", "service", "pre-prepare feed")
+  Container(feedService, "Feed service", "service", "pre-prepare feed(includes friends posts and reccomendations posts)")
 }
 
 System_Boundary(placeSystem, "Place system") {
@@ -31,7 +31,7 @@ System_Boundary(placeSystem, "Place system") {
 }
 Container(apiGateway, "Api Gateway")
 
-ContainerQueue(recQueue, "Rec queue", "Rabbit MQ")
+ContainerQueue(recQueue, "Rec queue", "Rabbit MQ", "helps prepare recommendations")
 
 Rel(userService, userDb, "get user info by id")
 Rel(userService, postService, "get user posts")
@@ -41,18 +41,18 @@ Rel(userService, placeService, "get current location of user and the places he w
 Rel(authService, authDb, "register user, auth user")
 Rel(authService, authCache, "get or set auth metadata by cookie,deviceId")
 
-Rel(interestsService, interestsDb, "get info about user interests")
-Rel(interestsService, interestsCache, "save info about interests")
+Rel(interestsService, interestsDb, "get info about user interests(for example: Max likes nature photos. Emma likes videos with animals.)")
+Rel(interestsService, interestsCache, "save info about interests(for example: Max likes nature photos. Emma likes videos with animals.)")
 
 Rel(relationService, relationDb, "follow, unfollow, get subscribers")
 Rel(relationService, relationCache, "get subscribers by id")
 
-Rel(userQueue, relationService, "update relations")
+Rel(userQueue, relationService, "update relations(if someone subscribe to another")
 Rel(userQueue, feedService, "update feed")
 
 Rel(traveler, apiGateway, "view profile, registration, auth, follow")
 
-Rel(recQueue, interestsService, "process info about user action")
+Rel(recQueue, interestsService, "process info about user action(for example Max likes nature photo and we update that Max interested in nature")
 
 Rel(feedService, interestsService, "get user interests for create rec feed")
 

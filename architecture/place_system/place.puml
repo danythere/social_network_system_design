@@ -2,10 +2,8 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 Person(traveler, "traveler")
 
-
-
 System_Boundary(placeSystem, "Place system") {
-   Container(placeService, "Place service", "service", "responsible for popular places and locations")
+   Container(placeService, "Place service", "service", "responsible for popular places and info about locations(name, coordinates...)")
    ContainerDb(placeDb, "Place database", "PostgreSQL")
    ContainerDb(placeCache, "Posts by place cache", "Redis")
 }
@@ -18,14 +16,14 @@ ContainerQueue(postQueue, "Post queue", "Rabbit MQ")
 
 Container(apiGateway, "Api Gateway")
 
-Rel(traveler, apiGateway, "view popular places or set profile location")
+Rel(traveler, apiGateway, "view popular places")
 
-Rel(apiGateway, placeService, "")
+Rel(apiGateway, placeService, "get popular places and posts in it")
 
-Rel(postQueue, placeService, "give updates")
+Rel(postQueue, placeService, "give updates about new posts in location")
 
 Rel(postService, postQueue, "send update")
 Rel(placeService, placeDb, "get places")
 Rel(placeService, placeCache, "get, update popular places")
-Rel(placeService, postService, "get posts in place")
+Rel(placeService, postService, "get posts in place if no cache")
 @enduml
