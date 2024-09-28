@@ -1,0 +1,55 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(traveler, "traveler")
+
+System_Boundary(postSystem, "Post system") {
+   Container(postService, "Post service", "service", "responsible for posts content, likes, comments")
+    ContainerDb(postCache, "Post cache", "Redis", "get last posts by userId")
+   ContainerDb(postDb, "Post database", "PostgreSQL")
+   Container(feedService, "Feed service", "service", "pre-prepare feed(includes friends posts and reccomendations posts)")
+   ContainerDb(feedCache, "Feed cache", "Redis", "Pre-prepared feed for user(includes celebrities posts, usual users posts and reccomendations")
+   ContainerDb(imageDb, "Image database(temp and stable)", "S3", "when loading an image, it gets into temp. if the post has not been published, the image is deleted from temp. if the post is published, the picture is transferred to stable.")
+}
+
+System_Boundary(userSystem, "User system") {
+   Container(interestsService, "Interests service", "service", "pre-prepare interests(for example: Max likes nature photos. Emma likes videos with animals.)")
+}
+
+ContainerDb(imageCdn, "Image CDN")
+
+System_Boundary(placeSystem, "Place system") {
+  Container(placeService, "Place service", "service", "responsible for popular places and locations")
+}
+
+Container(apiGateway, "Api Gateway")
+
+ContainerQueue(postQueue, "Post queue", "Rabbit MQ")
+ContainerQueue(recQueue, "Rec queue", "Rabbit MQ", "helps prepare recommendations")
+
+Rel(traveler, imageCdn, "get an image")
+
+Rel(imageCdn, imageDb, "pull if not exist")
+
+Rel(postService, imageDb, "upload a photo, apply post creating")
+Rel(postService, postDb, "CRUD posts, update post, like, comment")
+Rel(postService, postCache, "get last posts for creating feed faster")
+Rel(postService, postQueue, "send update about creating post")
+Rel(postService, placeService, "get place of post")
+Rel(postService, recQueue, "save info about user action(for example Max likes nature photo and we update that Max interested in nature)")
+
+
+Rel(feedService, feedCache, "CRUD pre-prepared posts")
+Rel(feedService, postService, "get posts if no cache")
+Rel(feedService, interestsService, "get user interests for creating rec feed")
+
+
+Rel(postQueue, feedService, "give a new post(signal for updating feed for users)")
+Rel(postQueue, placeService, "give updates about new post in location")
+
+Rel(recQueue, interestsService, "process info about user action")
+
+Rel(traveler, apiGateway, "view feed, like, send comments")
+
+Rel(apiGateway, feedService, "get personal feed")
+Rel(apiGateway, postService, "CRUD post/like/comment")
+@enduml

@@ -1,0 +1,100 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(traveler, "traveler")
+
+System_Boundary(userSystem, "User system") {
+   Container(userService, "User service", "service", "provides info about user")
+   ContainerDb(userDb, "User database", "PostgreSQL")
+   Container(relationService, "Relation service", "service", "provides info about relations")
+   ContainerDb(relationDb, "Relation database", "PostgreSQL")
+   ContainerDb(relationCache, "Relation cache", "Redis")
+   Container(authService, "Auth service", "service", "responsible for auth/registration")
+   ContainerDb(authDb, "Auth database", "PostgreSQL")
+   ContainerDb(authCache, "Auth cache", "Redis")
+   Container(interestsService, "Interests service", "service", "pre-prepare interests")
+   ContainerDb(interestsCache, "Interests cache", "Redis", "Pre-prepared user inrterests")
+   ContainerDb(interestsDb, "Interests database", "MongoDB", "user interests")
+}
+
+System_Boundary(placeSystem, "Place system") {
+   Container(placeService, "Place service", "service", "responsible for popular places and locations")
+   ContainerDb(placeDb, "Place database", "PostgreSQL")
+   ContainerDb(placeCache, "Posts by place cache", "Redis")
+}
+
+System_Boundary(postSystem, "Post system") {
+   Container(postService, "Post service", "service", "responsible for posts content, likes, comments")
+   ContainerDb(postDb, "Post database", "PostgreSQL")
+   Container(feedService, "Feed service", "service", "pre-prepare feed")
+   ContainerDb(feedCache, "Feed cache", "Redis", "Pre-prepared posts")
+   ContainerDb(postCache, "Post cache", "Redis", "Pre-prepared posts by user")
+   ContainerDb(celebrityCache, "Celebrity cache", "Redis", "Pre-prepared posts from celebrity")
+   ContainerDb(recCache, "Recommendation cache", "Redis", "Pre-prepared recommendation posts")
+   ContainerDb(imageDb, "Image database(temp and stable)", "S3")
+}
+
+Container(apiGateway, "Api Gateway")
+
+ContainerDb(imageCdn, "Image CDN")
+
+ContainerQueue(userQueue, "User queue", "Rabbit MQ")
+
+ContainerQueue(recQueue, "Rec queue", "Rabbit MQ")
+
+ContainerQueue(postQueue, "Post queue", "Rabbit MQ")
+
+Rel(imageCdn, imageDb, "pull if not exist")
+
+Rel(userService, userDb, "get user info by id")
+Rel(userService, postService, "get user posts")
+Rel(userService, relationService, "get relations")
+Rel(userService, placeService, "get current location of user and the places he was in")
+
+Rel(authService, authDb, "register user, auth user")
+Rel(authService, authCache, "get or set auth metadata by cookie,deviceId")
+
+Rel(interestsService, interestsDb, "get info about user interests")
+Rel(interestsService, interestsCache, "save info about interests")
+
+Rel(relationService, relationDb, "follow, unfollow, get subscribers")
+Rel(relationService, relationCache, "get subscribers by id")
+
+Rel(userQueue, relationService, "update relations")
+Rel(userQueue, feedService, "update feed")
+
+Rel(traveler, imageCdn, "get an image")
+Rel(traveler, apiGateway, "view profile, registration, auth, follow")
+Rel(traveler, apiGateway, "view popular places or set profile location")
+Rel(traveler, apiGateway, "view feed, like, send comments")
+
+Rel(recQueue, interestsService, "process info about user action")
+
+Rel(postQueue, feedService, "give a new post")
+Rel(postQueue, placeService, "give updates")
+
+
+Rel(placeService, placeDb, "get places")
+Rel(placeService, placeCache, "get, update popular places")
+Rel(placeService, postService, "get posts in place")
+
+Rel(postService, imageDb, "upload a photo, apply post creating")
+Rel(postService, postDb, "CRUD posts, update post, like, comment")
+Rel(postService, postCache, "CRUD user posts")
+Rel(postService, postQueue, "send update")
+Rel(postService, placeService, "get place of post")
+Rel(postService, recQueue, "save info about user action")
+
+
+Rel(feedService, feedCache, "CRUD pre-prepared posts")
+Rel(feedService, recCache, "CRUD rec posts")
+Rel(feedService, celebrityCache, "CRUD celebrity posts")
+Rel(feedService, postService, "get posts if no cache")
+Rel(feedService, interestsService, "get user interests for create rec feed")
+
+Rel(apiGateway, userService, "get info about profile")
+Rel(apiGateway, authService, "auth/registration")
+Rel(apiGateway, userQueue, "follow")
+Rel(apiGateway, placeService, "")
+Rel(apiGateway, feedService, "get personal feed")
+Rel(apiGateway, postService, "CRUD post/like/comment")
+@enduml

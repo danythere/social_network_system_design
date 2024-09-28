@@ -1,0 +1,12 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+Person(traveler, "traveler")
+
+System(postSystem, "Post system")
+System(userSystem, "User system")
+System(placeSystem, "Place system")
+
+Rel(traveler, postSystem, "view feed, like, send comments")
+Rel(traveler, placeSystem, "get popular places")
+Rel(traveler, userSystem, "view profiles/auth/registration")
+@enduml
